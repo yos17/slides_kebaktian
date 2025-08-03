@@ -85,7 +85,7 @@ def create_slide(prs, title, content_lines, slide_number=None, total_slides=None
     # Add title at top-left, with distance from red line
     title_box = slide.shapes.add_textbox(
         Inches(0.5), Inches(0.6),  # More distance from red line at top
-        prs.slide_width - Inches(7.0), Inches(1.0)  # Leave space for slide counter
+        prs.slide_width - Inches(1.8), Inches(1.0)  # Leave minimal space for narrow slide counter
     )
     title_frame = title_box.text_frame
     title_frame.margin_left = Inches(0.2)
@@ -104,8 +104,8 @@ def create_slide(prs, title, content_lines, slide_number=None, total_slides=None
     # Add slide counter (e.g., "1/4") in top-right if provided
     if slide_number is not None and total_slides is not None:
         counter_box = slide.shapes.add_textbox(
-            prs.slide_width - Inches(2.0), Inches(0.6),  # Top-right position
-            Inches(1.5), Inches(1.0)
+            prs.slide_width - Inches(1.3), Inches(0.6),  # Top-right position, narrower
+            Inches(1.0), Inches(1.0)  # Narrower width for compact counter
         )
         counter_frame = counter_box.text_frame
         counter_frame.margin_left = Inches(0.1)
@@ -118,7 +118,7 @@ def create_slide(prs, title, content_lines, slide_number=None, total_slides=None
         counter_p.font.size = Pt(24)
         counter_p.font.name = "Calibri"
         counter_p.font.bold = True
-        counter_p.font.color.rgb = RGBColor(100, 100, 100)  # Gray
+        counter_p.font.color.rgb = RGBColor(139, 69, 19)  # Brown
         counter_p.alignment = PP_ALIGN.RIGHT
     
     # Add content below title, positioned much closer
