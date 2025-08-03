@@ -5,8 +5,10 @@ Automatically generates PowerPoint presentations from worship song collections u
 ## Features
 
 - **Simple & Fast**: One command to generate presentations
+- **Web Interface**: User-friendly web app with drag & drop upload (see `webapp/`)
 - **Template Support**: Use existing PowerPoint templates with --master option
 - **Table of Contents**: Generate clickable TOC with --toc option
+- **Slide Numbering**: Automatic numbering (1/4, 2/4, etc.) in brown color
 - **Automatic Song Parsing**: Extracts 115+ songs from text file with # separators  
 - **Natural Slide Breaks**: Uses paragraph breaks (empty lines) to split lyrics
 - **Clean Formatting**: Calibri fonts with optimized sizing for readability
@@ -14,14 +16,17 @@ Automatically generates PowerPoint presentations from worship song collections u
 
 ## Quick Start
 
-### Prerequisites
+### Option 1: Web Interface (Recommended)
+```bash
+cd webapp/
+pip3 install flask python-pptx
+python3 app.py
+```
+Visit `http://localhost:5000` for drag & drop interface!
+
+### Option 2: Command Line
 ```bash
 pip3 install python-pptx
-```
-
-### Usage
-
-```bash
 python3 simple_generator.py <input_file.txt> [output_file.pptx] [--master template.pptx] [--toc]
 ```
 
@@ -73,9 +78,14 @@ Next song content...
 
 ```
 slides_kebaktian/
-├── simple_generator.py           # Main script
+├── simple_generator.py           # Command-line script
 ├── kumpulan_lagu_ekklesia.txt    # Song collection (115 songs)
 ├── Master Folie Natal.pptx      # Template reference
+├── webapp/                       # Web application
+│   ├── app.py                   # Flask web server
+│   ├── generator.py             # Web-optimized generator
+│   ├── templates/               # HTML templates
+│   └── README.md                # Web app documentation
 └── songs_presentation.pptx      # Generated output
 ```
 
