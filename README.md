@@ -5,9 +5,11 @@ Automatically generates PowerPoint presentations from worship song collections u
 ## Features
 
 - **Simple & Fast**: One command to generate presentations
+- **Template Support**: Use existing PowerPoint templates with --master option
+- **Table of Contents**: Generate clickable TOC with --toc option
 - **Automatic Song Parsing**: Extracts 115+ songs from text file with # separators  
 - **Natural Slide Breaks**: Uses paragraph breaks (empty lines) to split lyrics
-- **Clean Formatting**: Simple slides with title headers and centered content
+- **Clean Formatting**: Calibri fonts with optimized sizing for readability
 - **Multi-language Support**: Handles English, Indonesian, and German songs
 
 ## Quick Start
@@ -20,7 +22,7 @@ pip3 install python-pptx
 ### Usage
 
 ```bash
-python3 simple_generator.py <input_file.txt> [output_file.pptx]
+python3 simple_generator.py <input_file.txt> [output_file.pptx] [--master template.pptx] [--toc]
 ```
 
 **Examples:**
@@ -31,15 +33,23 @@ python3 simple_generator.py kumpulan_lagu_ekklesia.txt
 # Generate with custom filename
 python3 simple_generator.py kumpulan_lagu_ekklesia.txt my_worship_songs.pptx
 
-# Automatically adds .pptx extension if missing
-python3 simple_generator.py kumpulan_lagu_ekklesia.txt sunday_service
+# Use existing PowerPoint template
+python3 simple_generator.py kumpulan_lagu_ekklesia.txt --master "Master Folie Natal.pptx"
+
+# Generate with Table of Contents
+python3 simple_generator.py kumpulan_lagu_ekklesia.txt --toc
+
+# Use template and generate TOC
+python3 simple_generator.py kumpulan_lagu_ekklesia.txt --master template.pptx --toc
 ```
 
 ## Output
 
-- **Clean Design**: Song title in header, lyrics centered on slide
+- **Professional Design**: Song title in header, lyrics left-aligned for readability
+- **Optimized Fonts**: 32pt Calibri Bold titles, 28pt Calibri content for congregation viewing
 - **Natural Flow**: Slides break at paragraph boundaries for better readability
-- **Large Fonts**: 36pt titles, 28pt content for congregation viewing
+- **Interactive TOC**: Clickable table of contents with 2-column layout (when --toc used)
+- **Template Integration**: Seamlessly works with existing PowerPoint templates
 - **Ready to Use**: Generates 400+ slides from 115 songs in seconds
 
 ## Song Collection Format
@@ -73,7 +83,9 @@ slides_kebaktian/
 
 - **Library**: python-pptx for PowerPoint generation
 - **Parsing**: Splits songs by # markers, slides by empty lines
-- **Formatting**: Arial font, black text, centered alignment
+- **Formatting**: Calibri font, black text, left alignment for better readability
+- **Template Support**: Preserves template layouts while adding content
+- **Navigation**: Hyperlink-based TOC for easy song navigation
 - **Performance**: Processes 115 songs into 400+ slides in under 5 seconds
 
 The system converts your worship song collection into clean, professional PowerPoint presentations suitable for church services.
