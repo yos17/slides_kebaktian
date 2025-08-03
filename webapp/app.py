@@ -17,7 +17,7 @@ import json
 from generator import generate_presentation
 
 app = Flask(__name__)
-app.secret_key = 'powerpoint-song-generator-secret-key-2024'
+app.secret_key = os.environ.get('SECRET_KEY', 'powerpoint-song-generator-secret-key-2024')
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
@@ -193,10 +193,15 @@ def too_large(e):
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    print("🎵 PowerPoint Song Generator Web App")
-    print("=" * 50)
-    print("Starting Flask development server...")
-    print("Visit http://localhost:8080 in your browser")
-    print("=" * 50)
+    # Get port from environment variable or default to 8080 for local development
+    port = int(os.environ.get('PORT', 8080))
+    debug = os.environ.get('FLASK_ENV') == 'development'
     
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    if debug:
+        print("🎵 PowerPoint Song Generator Web App")
+        print("=" * 50)
+        print("Starting Flask development server...")
+        print(f"Visit http://localhost:{port} in your browser")
+        print("=" * 50)
+    
+    app.run(debug=debug, host='0.0.0.0', port=port)
