@@ -1,0 +1,12 @@
+# Flask Web App Dependencies
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# PowerPoint Generation
+python-pptx==0.6.21
+
+# Additional utilities
+gunicorn==21.2.0
+
+# Security and file handling
+secure-filename
