@@ -1,0 +1,21 @@
+# PowerPoint output files
+*.pptx
+
+# Song collection (contains copyrighted content)
+kumpulan_lagu_ekklesia.txt
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Claude files
+.claude/
