@@ -196,7 +196,7 @@ if __name__ == '__main__':
     print("🎵 PowerPoint Song Generator Web App")
     print("=" * 50)
     print("Starting Flask development server...")
-    print("Visit http://localhost:5000 in your browser")
+    print("Visit http://localhost:8080 in your browser")
     print("=" * 50)
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=8080)
