@@ -7,6 +7,3 @@ python-pptx==0.6.21
 
 # Production Server
 gunicorn==21.2.0
-
-# File handling
-secure-filename
