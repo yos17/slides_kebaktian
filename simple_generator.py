@@ -63,7 +63,7 @@ def split_lyrics_into_slides(lyrics):
     return slides
 
 
-def create_slide(prs, title, content_lines):
+def create_slide(prs, title, content_lines, slide_number=None, total_slides=None):
     """Create a simple slide with title and content."""
     # Use a simple blank layout to avoid placeholder conflicts
     # This ensures consistent behavior across different templates
@@ -85,7 +85,7 @@ def create_slide(prs, title, content_lines):
     # Add title at top-left, with distance from red line
     title_box = slide.shapes.add_textbox(
         Inches(0.5), Inches(0.6),  # More distance from red line at top
-        prs.slide_width - Inches(1.0), Inches(1.0)
+        prs.slide_width - Inches(7.0), Inches(1.0)  # Leave space for slide counter
     )
     title_frame = title_box.text_frame
     title_frame.margin_left = Inches(0.2)
@@ -100,6 +100,26 @@ def create_slide(prs, title, content_lines):
     title_p.font.bold = True
     title_p.font.color.rgb = RGBColor(0, 0, 0)  # Black
     title_p.alignment = PP_ALIGN.LEFT
+    
+    # Add slide counter (e.g., "1/4") in top-right if provided
+    if slide_number is not None and total_slides is not None:
+        counter_box = slide.shapes.add_textbox(
+            prs.slide_width - Inches(2.0), Inches(0.6),  # Top-right position
+            Inches(1.5), Inches(1.0)
+        )
+        counter_frame = counter_box.text_frame
+        counter_frame.margin_left = Inches(0.1)
+        counter_frame.margin_right = Inches(0.1)
+        counter_frame.vertical_anchor = MSO_ANCHOR.TOP
+        counter_frame.word_wrap = False
+        
+        counter_p = counter_frame.paragraphs[0]
+        counter_p.text = f"{slide_number}/{total_slides}"
+        counter_p.font.size = Pt(24)
+        counter_p.font.name = "Calibri"
+        counter_p.font.bold = True
+        counter_p.font.color.rgb = RGBColor(100, 100, 100)  # Gray
+        counter_p.alignment = PP_ALIGN.RIGHT
     
     # Add content below title, positioned much closer
     if content_lines:
@@ -339,9 +359,10 @@ def main():
         first_slide_position = total_slides + toc_slides_count
         songs_with_slide_positions.append((title, first_slide_position))
         
-        # Create slides for this song
-        for slide_content in lyric_slides:
-            create_slide(prs, title, slide_content)
+        # Create slides for this song with numbering
+        total_song_slides = len(lyric_slides)
+        for slide_index, slide_content in enumerate(lyric_slides):
+            create_slide(prs, title, slide_content, slide_index + 1, total_song_slides)
             total_slides += 1
     
     # Generate Table of Contents if requested - create at beginning
@@ -364,96 +385,19 @@ def main():
         # Create TOC slides first
         create_toc_slides(final_prs, songs_with_slide_positions)
         
-        # Add song slides after TOC
-        for slide in prs.slides:
-            # Check if slide has any meaningful content
-            has_content = False
-            for shape in slide.shapes:
-                if hasattr(shape, 'text_frame') and shape.text_frame.text and shape.text_frame.text.strip():
-                    has_content = True
-                    break
+        # Add song slides after TOC - recreate them with slide numbering
+        for song in songs:
+            title = song['title']
+            lyrics = song['lyrics']
             
-            # Skip empty slides
-            if not has_content:
-                continue
-                
-            try:
-                if len(final_prs.slide_layouts) > 6:
-                    layout = final_prs.slide_layouts[6]
-                else:
-                    layout = final_prs.slide_layouts[-1]
-            except (IndexError, AttributeError):
-                layout = final_prs.slide_layouts[0]
+            # Split lyrics into slides
+            lyric_slides = split_lyrics_into_slides(lyrics)
+            total_song_slides = len(lyric_slides)
             
-            new_slide = final_prs.slides.add_slide(layout)
-            
-            # Copy shapes - recreate with proper formatting instead of copying
-            shape_count = 0
-            for shape in slide.shapes:
-                if hasattr(shape, 'text_frame') and shape.text_frame.text and shape.text_frame.text.strip():
-                    shape_count += 1
-                    
-                    # Determine if this is title or content based on position and content
-                    is_title = (shape_count == 1)  # First text box is usually title
-                    
-                    if is_title:
-                        # Extract title text
-                        title_text = ""
-                        for para in shape.text_frame.paragraphs:
-                            if para.text.strip():
-                                title_text = para.text.strip()
-                                break
-                        
-                        # Create title with proper formatting
-                        title_box = new_slide.shapes.add_textbox(
-                            Inches(0.5), Inches(0.6),
-                            final_prs.slide_width - Inches(1.0), Inches(1.0)
-                        )
-                        title_frame = title_box.text_frame
-                        title_frame.margin_left = Inches(0.2)
-                        title_frame.margin_right = Inches(0.2)
-                        title_frame.vertical_anchor = MSO_ANCHOR.TOP
-                        title_frame.word_wrap = True
-                        
-                        title_p = title_frame.paragraphs[0]
-                        title_p.text = title_text
-                        title_p.font.size = Pt(32)  # Force 32pt
-                        title_p.font.name = "Calibri"
-                        title_p.font.bold = True
-                        title_p.font.color.rgb = RGBColor(0, 0, 0)
-                        title_p.alignment = PP_ALIGN.LEFT
-                    else:
-                        # Extract content lines
-                        content_lines = []
-                        for para in shape.text_frame.paragraphs:
-                            if para.text.strip():
-                                content_lines.append(para.text.strip())
-                        
-                        if content_lines:
-                            # Create content with proper formatting
-                            content_box = new_slide.shapes.add_textbox(
-                                Inches(0.5), Inches(1.4),
-                                final_prs.slide_width - Inches(1.0), final_prs.slide_height - Inches(1.9)
-                            )
-                            content_frame = content_box.text_frame
-                            content_frame.margin_left = Inches(0.2)
-                            content_frame.margin_right = Inches(0.2)
-                            content_frame.vertical_anchor = MSO_ANCHOR.TOP
-                            content_frame.word_wrap = True
-                            
-                            # Add each line with proper formatting
-                            for i, line in enumerate(content_lines):
-                                if i == 0:
-                                    p = content_frame.paragraphs[0]
-                                else:
-                                    p = content_frame.add_paragraph()
-                                
-                                p.text = line
-                                p.font.size = Pt(28)  # Force 28pt
-                                p.font.name = "Calibri"
-                                p.font.color.rgb = RGBColor(0, 0, 0)
-                                p.alignment = PP_ALIGN.LEFT
-                                p.space_after = Pt(16)
+            # Create slides for this song with numbering
+            for slide_index, slide_content in enumerate(lyric_slides):
+                create_slide(final_prs, title, slide_content, slide_index + 1, total_song_slides)
+
         
         prs = final_prs
         total_slides += toc_slides_count
